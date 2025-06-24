@@ -55,12 +55,12 @@ prepare_baseenv() {
   # Since cmake 3.23.0 CMAKE_INSTALL_LIBDIR will force set to lib/<multiarch-tuple> on Debian
   echo '/usr/local/lib/x86_64-linux-gnu' > /etc/ld.so.conf.d/x86_64-linux-gnu-local.conf
   echo '/usr/local/lib64' > /etc/ld.so.conf.d/lib64-local.conf
-  retry apt update
-  
-  retry apt install -y --allow-downgrades software-properties-common apt-transport-https python3-tk tk-dev 
-  retry apt update
+  retry apt-get update
 
-  retry apt install -y \
+  retry apt-get install -y --allow-downgrades software-properties-common apt-transport-https python3-tk tk-dev 
+  retry apt-get update
+
+  retry apt-get install -y \
     make \
     build-essential \
     curl \
@@ -78,7 +78,7 @@ prepare_baseenv() {
 #libncursesw5-dev \
 #libreadline-dev \
 
-  apt autoremove --purge -y
+  apt-get autoremove --purge -y
   # strip all compiled files by default
   export CFLAGS='-s'
   export CXXFLAGS='-s'
