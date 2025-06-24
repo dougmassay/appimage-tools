@@ -115,7 +115,7 @@ prepare_python() {
   make DESTDIR=/opt/sigiltools/python install
   cd /opt/sigiltools/python
   zip -r "../sigilpython${PYTHON_VER}.zip" .
-  cp --no-preserve=mode,ownership "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
+  cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
   ldconfig
 }
 
