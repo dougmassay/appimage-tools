@@ -55,28 +55,28 @@ prepare_baseenv() {
   # Since cmake 3.23.0 CMAKE_INSTALL_LIBDIR will force set to lib/<multiarch-tuple> on Debian
   echo '/usr/local/lib/x86_64-linux-gnu' > /etc/ld.so.conf.d/x86_64-linux-gnu-local.conf
   echo '/usr/local/lib64' > /etc/ld.so.conf.d/lib64-local.conf
-
   retry apt update
-  retry apt install -y software-properties-common apt-transport-https
-
+  
+  retry apt install -y --allow-downgrades software-properties-common apt-transport-https python3-tk tk-dev 
   retry apt update
+
   retry apt install -y \
     make \
     build-essential \
     curl \
     libgdbm-dev \
+    libgdbm-compat-dev \
     liblzma-dev \
     libbz2-dev \
-    libncursesw5-dev \
-    libreadline-dev \
     libsqlite3-dev \
     libffi-dev \
     pkg-config \
-    python3-tk \
-    tk-dev \
     unzip \
     zip \
-    zlib1g-dev \
+    zlib1g-dev
+
+#libncursesw5-dev \
+#libreadline-dev \
 
   apt autoremove --purge -y
   # strip all compiled files by default
@@ -113,7 +113,7 @@ prepare_python() {
   ./configure --prefix=/usr --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --disable-test-modules
   make -j$(nproc)
   make DESTDIR=/opt/sigiltools/python install
-  cd /opt/sigiltools/python
+  cd /opt/sigiltools/python/usr
   zip -r "../sigilpython${PYTHON_VER}.zip" .
   cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
   ldconfig
