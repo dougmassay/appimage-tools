@@ -49,7 +49,7 @@ prepare_baseenv() {
 
   # keep debs in container for store cache in docker volume
   rm -f /etc/apt/apt.conf.d/*
-  echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' >/etc/apt/apt.conf.d/01keep-debs
+  echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/01keep-debs
   echo -e 'Acquire::https::Verify-Peer "false";\nAcquire::https::Verify-Host "false";' > /etc/apt/apt.conf.d/99-trust-https
 
   # Since cmake 3.23.0 CMAKE_INSTALL_LIBDIR will force set to lib/<multiarch-tuple> on Debian
@@ -114,7 +114,7 @@ prepare_python() {
   make -j$(nproc)
   make DESTDIR=/opt/sigiltools/python install
   cd /opt/sigiltools/python/usr
-  zip -r "../sigilpython${PYTHON_VER}.zip" .
+  zip -r "../sigilpython${PYTHON_VER}.zip" . -x "__pycache__/*"
   cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
   ldconfig
 }
