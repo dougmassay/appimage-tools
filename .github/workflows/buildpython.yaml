@@ -31,5 +31,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Python-Artifact
-        path: $GITHUB_WORKSPACE/.github/workflows/sigilpython*.zip
+        path: ${{runner.workspace}}/.github/workflows/sigilpython*.zip
         retention-days: 5
