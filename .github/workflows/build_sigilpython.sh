@@ -114,7 +114,7 @@ prepare_python() {
   make -j$(nproc)
   make DESTDIR=/opt/sigiltools/python install
   cd /opt/sigiltools/python/usr
-  zip -r "../sigilpython${PYTHON_VER}.zip" . -x "__pycache__/*"
+  zip -r "../sigilpython${PYTHON_VER}.zip" . -x "__pycache__"
   cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
   ldconfig
 }
