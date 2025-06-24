@@ -1,0 +1,34 @@
+name: Build 22.04 Python
+
+on:
+  workflow_dispatch:
+
+env:
+  PY_VER: 3.13
+  PY_VER2: 3.13.2
+
+jobs:
+
+  build:
+    runs-on: latest
+
+    container:
+      image: ubuntu:22.04
+      options: --privileged
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: master
+
+    - name: Build Python
+      run: |
+        $GITHUB_WORKSPACE/.github/workflows/build_sigilpython.sh
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Python-Artifact
+        path: $GITHUB_WORKSPACE/.github/workflows/sigilpython*.zip
+        retention-days: 5
