@@ -70,7 +70,7 @@ prepare_baseenv() {
     libncursesw5-dev \
     libreadline-dev \
     libsqlite3-dev \
-    libssl-dev \
+    libffi-dev \
     pkg-config \
     python3-tk \
     tk-dev \
@@ -110,7 +110,7 @@ prepare_python() {
     touch "/usr/src/python3-${PYTHON_VER}/.unpack_ok"
   fi
   cd "/usr/src/python3-${PYTHON_VER}"
-  ./configure --prefix=/usr --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --with-ensurepip --disable-test-modules
+  ./configure --prefix=/usr --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --disable-test-modules
   make -j$(nproc)
   make DESTDIR=/opt/sigiltools/python install
   cd /opt/sigiltools/python
