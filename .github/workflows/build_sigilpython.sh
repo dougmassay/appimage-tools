@@ -4,8 +4,8 @@
 # Please run this script in docker image: ubuntu:22.04
 # E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/.github/workflows/build_sigilpython.sh
 # If you need keep store build cache in docker volume, just like:
-#   $ docker volume create sigil-cache
-#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v sigil-cache:/var/cache/apt -v sigil-cache:/usr/src ubuntu:22.04 /build/.github/workflows/build_appimage.sh
+#   $ docker volume create appimage-tools
+#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/.github/workflows/build_sigilpython.sh
 # Artifacts will copy to the same directory.
 
 set -o pipefail
@@ -119,6 +119,8 @@ prepare_python() {
   ldconfig
 }
 
-prepare_baseenv
-prepare_ssl
-prepare_python
+time {
+  prepare_baseenv
+  prepare_ssl
+  prepare_python
+}
