@@ -127,7 +127,7 @@ setup_python() {
     retry curl -kLC- -o "/usr/src/sigilpython${PYTHON_VER}.tar.xz" "${python_url}"
     touch "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok"
   fi
-  tar -xJvf /opt/sigiltools "/usr/src/sigilpython${PYTHON_VER}.tar.xz"
+  tar -xJvf "/usr/src/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools 
   export PATH=/opt/sigiltools/python/bin:$PATH
   export LD_LIBRARY_PATH=/opt/sigiltools/python/lib:$LD_LIBRARY_PATH
   export PYTHONHOME=/opt/sigiltools/python
