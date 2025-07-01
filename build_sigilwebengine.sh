@@ -182,4 +182,5 @@ time {
   setup_python
   setup_nodejs
   setup_qt6
+  setup_webengine_src
 }
