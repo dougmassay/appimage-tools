@@ -63,13 +63,13 @@ prepare_baseenv() {
     libasound2-dev \
     libpulse-dev \
     libdrm-dev \
-    libxshimfence-dev \
+    libxshmfence-dev \
     libxkbfile-dev \
     libxcomposite-dev \
     libxcursor-dev \
     libxrandr-dev \
     libxi-dev \
-    xlproto-dev \
+    x11proto-dev \
     libxtst-dev \
     libxkbcommon-dev \
     libxcb-dri3-dev \
