@@ -169,7 +169,7 @@ setup_webengine_src() {
   if [ ! -f "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" ]; then
     retry curl -kLo "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" "${webengine_url}"
   fi
-  tar -xJf "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" -C /opt/we_src
+  tar -xJvf "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" -C /opt/we_src
   mkdir /opt/we_src/build
   cd /opt/we_src/build
   qt-configure-module .. -list-features
