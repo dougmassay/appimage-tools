@@ -120,7 +120,7 @@ prepare_buildenv() {
 }
 
 setup_python() {
-  makedir -p /opt/sigiltools
+  mkdir -p /opt/sigiltools
   python_url="https://github.com/dougmassay/win-qtwebkit-5.212/releases/download/v5.212-1/sigilpython${PYTHON_VER}.tar.xz"
   if [ ! -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok" ]; then
     rm -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz"
@@ -132,6 +132,7 @@ setup_python() {
   export LD_LIBRARY_PATH=/opt/sigiltools/python/lib:$LD_LIBRARY_PATH
   export PYTHONHOME=/opt/sigiltools/python
   which python3
+  echo "Python version $(python3 --version)"
 }
 
 setup_nodejs() {

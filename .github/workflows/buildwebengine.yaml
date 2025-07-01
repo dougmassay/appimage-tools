@@ -18,7 +18,7 @@ jobs:
       with:
         ref: master
 
-    - name: Build Python
+    - name: Prepare WebEngine Build Env
       run: |
         chmod +x $GITHUB_WORKSPACE/build_sigilwebengine.sh
         $GITHUB_WORKSPACE/build_sigilwebengine.sh
