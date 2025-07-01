@@ -11,7 +11,7 @@
 set -o pipefail
 
 export PYTHON_VER="3.13.2"
-export OPENSSL_VER="3.0.16"
+export QT6_VER="6.8.2"
 export LC_ALL="C.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
@@ -132,6 +132,11 @@ setup_python() {
   export LD_LIBRARY_PATH=/opt/sigiltools/python/lib:$LD_LIBRARY_PATH
   export PYTHONHOME=/opt/sigiltools/python
   which python3
+  echo "Upgrading pip..."
+  export PIP_ROOT_USER_ACTION=ignore
+  python3 -m ensurepip
+  python3 -m pip install --upgrade --force-reinstall pip --disable-pip-version-check --no-warn-script-location
+  python3 -m pip install html5lib
   echo "Python version $(python3 --version)"
 }
 
@@ -142,10 +147,18 @@ setup_nodejs() {
   node -v
 }
 
+setup_qt6() {
+  python3 -m pip install aqtinstall
+  python3 -m aqt install-qt --outputdir "/opt/sigiltools/qt linux desktop ${QT6_VER}" linux_gcc_64 -m qtpositioning qtpdf qtwebchannel qtserialport qtimageformats
+  export PATH=/opt/sigiltools/qt/6.8.2/gcc_64/bin:$PATH
+  echo "Qt version $(qmake -v)"
+}
+
 
 time {
   prepare_baseenv
   prepare_buildenv
   setup_python
   setup_nodejs
+  setup_qt6
 }
