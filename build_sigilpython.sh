@@ -118,8 +118,8 @@ prepare_python() {
   #zip -r "../sigilpython${PYTHON_VER}.zip" . -x "**/__pycache__/*"
   #cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
   cd /opt/sigiltools/python
-  tar -cvJf sigilpython${PYTHON_VER}.tar.xz --exclude='**/__pycache__/*' .
-  cp -fv sigilpython${PYTHON_VER}.tar.xz "${SELF_DIR}/"
+  tar -cvJf ../sigilpython${PYTHON_VER}.tar.xz --exclude='**/__pycache__/*' .
+  cp -fv ../sigilpython${PYTHON_VER}.tar.xz "${SELF_DIR}/"
   ldconfig
 }
 
