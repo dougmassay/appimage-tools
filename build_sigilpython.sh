@@ -113,9 +113,12 @@ prepare_python() {
   ./configure --prefix=/usr --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --disable-test-modules
   make -j$(nproc)
   make DESTDIR=/opt/sigiltools/python install
-  cd /opt/sigiltools/python/usr
-  zip -r "../sigilpython${PYTHON_VER}.zip" . -x "**/__pycache__/*"
-  cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
+  #cd /opt/sigiltools/python/usr
+  #zip -r "../sigilpython${PYTHON_VER}.zip" . -x "**/__pycache__/*"
+  #cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
+  cd /opt/sigiltools
+  tar -cvJf sigilpython${PYTHON_VER}.tar.xz --exclude='**/__pycache__/*' python
+  cp -fv sigilpython${PYTHON_VER}.tar.xz "${SELF_DIR}/"
   ldconfig
 }
 
