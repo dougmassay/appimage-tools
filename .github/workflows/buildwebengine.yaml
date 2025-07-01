@@ -1,0 +1,25 @@
+name: Prepare 22.04 QtWebEngine build
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ubuntu:22.04
+      options: --privileged
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: master
+
+    - name: Build Python
+      run: |
+        chmod +x $GITHUB_WORKSPACE/build_sigilwebengine.sh
+        $GITHUB_WORKSPACE/build_sigilwebengine.sh
+
