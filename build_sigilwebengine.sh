@@ -149,7 +149,7 @@ setup_nodejs() {
 
 setup_qt6() {
   python3 -m pip install --root-user-action ignore aqtinstall
-  python3 -m aqt install-qt --outputdir "/opt/sigiltools/qt linux desktop ${QT6_VER}" linux -m qtpositioning qtpdf qtwebchannel qtserialport qtimageformats
+  python3 -m aqt install-qt --outputdir /opt/sigiltools/qt linux desktop "${QT6_VER}" linux_gcc_64 -m qtpositioning qtpdf qtwebchannel qtserialport qtimageformats
   export PATH=/opt/sigiltools/qt/6.8.2/gcc_64/bin:$PATH
   echo "Qt version $(qmake -v)"
 }
