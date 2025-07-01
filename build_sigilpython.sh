@@ -110,14 +110,15 @@ prepare_python() {
     touch "/usr/src/python3-${PYTHON_VER}/.unpack_ok"
   fi
   cd "/usr/src/python3-${PYTHON_VER}"
-  ./configure --prefix=/usr --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --disable-test-modules
+  ./configure --prefix=/opt/sigiltools/python --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --disable-test-modules
   make -j$(nproc)
-  make DESTDIR=/opt/sigiltools/python install
+  #make DESTDIR=/opt/sigiltools/python install
+  make install
   #cd /opt/sigiltools/python/usr
   #zip -r "../sigilpython${PYTHON_VER}.zip" . -x "**/__pycache__/*"
   #cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
-  cd /opt/sigiltools
-  tar -cvJf sigilpython${PYTHON_VER}.tar.xz --exclude='**/__pycache__/*' python
+  cd /opt/sigiltools/python
+  tar -cvJf sigilpython${PYTHON_VER}.tar.xz --exclude='**/__pycache__/*' .
   cp -fv sigilpython${PYTHON_VER}.tar.xz "${SELF_DIR}/"
   ldconfig
 }
