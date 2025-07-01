@@ -11,7 +11,8 @@
 set -o pipefail
 
 export PYTHON_VER="3.13.2"
-export QT6_VER="6.8.2"
+export QT6_VER="6.8"
+export QT6_VER_FULL="6.8.2"
 export LC_ALL="C.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
@@ -127,7 +128,7 @@ setup_python() {
     retry curl -kLC- -o "/usr/src/sigilpython${PYTHON_VER}.tar.xz" "${python_url}"
     touch "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok"
   fi
-  tar -xJvf "/usr/src/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools 
+  tar -xJf "/usr/src/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools 
   export PATH=/opt/sigiltools/python/bin:$PATH
   export LD_LIBRARY_PATH=/opt/sigiltools/python/lib:$LD_LIBRARY_PATH
   export PYTHONHOME=/opt/sigiltools/python
@@ -149,9 +150,29 @@ setup_nodejs() {
 
 setup_qt6() {
   python3 -m pip install --root-user-action ignore aqtinstall
-  python3 -m aqt install-qt --outputdir /opt/sigiltools/qt linux desktop "${QT6_VER}" linux_gcc_64 -m qtpositioning qtpdf qtwebchannel qtserialport qtimageformats
-  export PATH=/opt/sigiltools/qt/6.8.2/gcc_64/bin:$PATH
+  python3 -m aqt install-qt --outputdir /opt/sigiltools/qt linux desktop "${QT6_VER_FULL}" linux_gcc_64 -m qtpositioning qtpdf qtwebchannel qtserialport qtimageformats
+  export PATH=/opt/sigiltools/qt/$QT6_VER_FULL/gcc_64/bin:$PATH
   echo "Qt version $(qmake -v)"
+}
+
+setup_webengine_src() {
+  mkdir -p /opt/we_src
+  webengine_url="https://download.qt.io/official_releases/qt/${QT6_VER}/${QT6_VER_FULL}/submodules/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz"
+  webengine_sha256_url="https://download.qt.io/official_releases/qt/${QT6_VER}/${QT6_VER_FULL}/submodules/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz.sha256"
+  if [ -f "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" ]; then
+    cd /usr/src
+    webengine_sha256="$(retry curl -ksSL --compressed "${webengine_sha256_url}" \| grep "qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz")"
+    if ! echo "${webengine_sha256}" | sha256sum -c; then
+      rm -f "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz"
+    fi
+  fi
+  if [ ! -f "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" ]; then
+    retry curl -kLo "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" "${webengine_url}"
+  fi
+  tar -xJf "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" -C /opt/we_src
+  mkdir /opt/we_src/build
+  cd /opt/we_src/build
+  qt-configure-module .. -list-features
 }
 
 
