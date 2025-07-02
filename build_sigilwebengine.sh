@@ -78,6 +78,7 @@ prepare_baseenv() {
     libxtst-dev \
     libxkbcommon-dev \
     libxcb-dri3-dev \
+    libxdamage-dev \
     zip \
     zlib1g-dev
 
@@ -127,12 +128,17 @@ prepare_buildenv() {
 setup_python() {
   mkdir -p /opt/sigiltools
   python_url="https://github.com/dougmassay/win-qtwebkit-5.212/releases/download/v5.212-1/sigilpython${PYTHON_VER}.tar.xz"
-  if [ ! -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok" ]; then
-    rm -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz"
-    retry curl -kLC- -o "/usr/src/sigilpython${PYTHON_VER}.tar.xz" "${python_url}"
-    touch "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok"
+  if [ -f "${SELF_DIR}/sigilpython${PYTHON_VER}.tar.xz" ]; then
+    echo "Using local Python archive"
+    tar -xJf "${SELF_DIR}/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools
+  else
+    if [ ! -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok" ]; then
+      rm -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz"
+      retry curl -kLC- -o "/usr/src/sigilpython${PYTHON_VER}.tar.xz" "${python_url}"
+      touch "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok"
+    fi
+    tar -xJf "/usr/src/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools
   fi
-  tar -xJf "/usr/src/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools 
   export PATH=/opt/sigiltools/python/bin:$PATH
   export LD_LIBRARY_PATH=/opt/sigiltools/python/lib:$LD_LIBRARY_PATH
   export PYTHONHOME=/opt/sigiltools/python
@@ -141,7 +147,7 @@ setup_python() {
   export PIP_ROOT_USER_ACTION=ignore
   python3 -m ensurepip
   python3 -m pip install --upgrade --force-reinstall --root-user-action ignore pip --disable-pip-version-check --no-warn-script-location
-  python3 -m pip install html5lib 
+  python3 -m pip install --root-user-action ignore html5lib 
   echo "Python version $(python3 --version)"
 }
 
@@ -181,11 +187,10 @@ setup_webengine_src() {
   cmake --build . --parallel --verbose
   cmake --install . --prefix /opt/Qt/${QT6_VER_FULL}/gcc_64
   cd /opt
-  XZ_OPT='-9' tar -cJf AppImageWebEngine${QT6_FN}.tar.xz --exclude='*.debug' Qt
+  #XZ_OPT='-9' tar -cJf AppImageWebEngine${QT6_FN}.tar.xz --exclude='*.debug' Qt
+  tar -cJf AppImageWebEngine${QT6_FN}.tar.xz --exclude='*.debug' Qt
   cp -fv AppImageWebEngine${QT6_FN}.tar.xz "${SELF_DIR}/"
 }
-
-
 
 prepare_baseenv
 prepare_buildenv
