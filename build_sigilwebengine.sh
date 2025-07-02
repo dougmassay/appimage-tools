@@ -2,10 +2,10 @@
 
 # This script is for building python for sigil appimage
 # Please run this script in docker image: ubuntu:22.04
-# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/.github/workflows/build_sigilwebengine.sh
+# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/build_sigilwebengine.sh
 # If you need keep store build cache in docker volume, just like:
 #   $ docker volume create appimage-tools
-#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/.github/workflows/build_sigilwebengine.sh
+#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/build_sigilwebengine.sh
 # Artifacts will copy to the same directory.
 
 set -o pipefail
@@ -13,6 +13,7 @@ set -o pipefail
 export PYTHON_VER="3.13.2"
 export QT6_VER="6.8"
 export QT6_VER_FULL="6.8.2"
+export QT6_FN="682"
 export LC_ALL="C.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
@@ -59,6 +60,9 @@ prepare_baseenv() {
     gperf \
     bison \
     flex \
+    libfontconfig1-dev \
+    libdbus-glib-1-dev \
+    libgl1-mesa-dev \
     libgbm-dev \
     libnss3-dev \
     libasound2-dev \
@@ -169,18 +173,25 @@ setup_webengine_src() {
   if [ ! -f "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" ]; then
     retry curl -kLo "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" "${webengine_url}"
   fi
-  tar -xJf "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" -C /opt/we_src
-  mkdir /opt/we_src/src/build
-  cd /opt/we_src/src/build
+  tar -xJf "/usr/src/qtwebengine-everywhere-src-${QT6_VER_FULL}.tar.xz" -C /opt/we_src --strip-components 1
+  mkdir /opt/we_src/build
+  cd /opt/we_src/build
   qt-configure-module .. -list-features
+  qt-configure-module .. -feature-qtwebengine-build -feature-qtwebengine-widgets-build -no-feature-qtpdf-quick-build -no-feature-qtwebengine-quick-build -no-feature-webengine-system-libxml -feature-webengine-proprietary-codecs -webengine-ffmpeg -webengine-icu -- -D CMAKE_BUILD_TYPE=MinSizeRel
+  cmake --build . --parallel --verbose
+  cmake --install . --prefix /opt/Qt/${QT6_VER_FULL}/gcc_64
+  cd /opt
+  XZ_OPT='-9' tar -cJf AppImageWebEngine${QT6_FN}.tar.xz --exclude='*.debug' Qt
+  cp -fv AppImageWebEngine${QT6_FN}.tar.xz "${SELF_DIR}/"
 }
 
 
+
+prepare_baseenv
+prepare_buildenv
+setup_python
+setup_nodejs
+setup_qt6
 time {
-  prepare_baseenv
-  prepare_buildenv
-  setup_python
-  setup_nodejs
-  setup_qt6
   setup_webengine_src
 }
