@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# This script is for building python for sigil appimage
+# This script is for building qtwebengine for sigil appimage
 # Please run this script in docker image: ubuntu:22.04
 # E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/build_sigilwebengine.sh
 # If you need keep store build cache in docker volume, just like:
