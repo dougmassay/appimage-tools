@@ -1,7 +1,7 @@
 name: Test container stuff
 
 on:
-  #push:
+  push:
 
   workflow_dispatch:
     inputs:
@@ -57,5 +57,6 @@ jobs:
         COMMITISH: ${{ needs.gather-info.outputs.commitish }}"
       
     steps:
+      - run: apt-get install -y git
       - uses: actions/checkout@v4
       - run: echo "Commitish is $COMMITISH"
