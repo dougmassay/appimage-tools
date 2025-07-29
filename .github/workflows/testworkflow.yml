@@ -57,8 +57,10 @@ jobs:
         COMMITISH: ${{ needs.gather-info.outputs.commitish }}"
       
     steps:
-      - run: | 
-          apt-add-repository ppa:git-core/ppa
+      - run: |
+          apt-get install python-software-properties
+          apt-get install software-properties-common
+          apt-add-repository -y ppa:git-core/ppa
           apt-get update
           apt-get install -y git
 
