@@ -63,6 +63,7 @@ jobs:
           apt-add-repository -y ppa:git-core/ppa
           apt-get update
           apt-get install -y git
+          apt-get autoremove --purge -y
 
       - uses: actions/checkout@v4
       - run: echo "Commitish is $COMMITISH"
