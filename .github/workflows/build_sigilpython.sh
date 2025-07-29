@@ -2,10 +2,10 @@
 
 # This script is for building python for sigil appimage
 # Please run this script in docker image: ubuntu:22.04
-# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/build_sigilpython.sh
+# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/.github/workflows/build_sigilpython.sh
 # If you need keep store build cache in docker volume, just like:
 #   $ docker volume create appimage-tools
-#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/build_sigilpython.sh
+#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/.github/workflows/build_sigilpython.sh
 # Artifacts will copy to the same directory.
 
 set -o pipefail
@@ -64,6 +64,7 @@ prepare_baseenv() {
     make \
     build-essential \
     curl \
+    libssl-dev \
     libgdbm-dev \
     libgdbm-compat-dev \
     liblzma-dev \
@@ -110,21 +111,17 @@ prepare_python() {
     touch "/usr/src/python3-${PYTHON_VER}/.unpack_ok"
   fi
   cd "/usr/src/python3-${PYTHON_VER}"
-  ./configure --prefix=/opt/sigiltools/python --enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions --disable-test-modules
+  ./configure --prefix=/opt/sigiltools/python --enable-shared --enable-optimizations --enable-loadable-sqlite-extensions --disable-test-modules
   make -j$(nproc)
-  #make DESTDIR=/opt/sigiltools/python install
   make install
-  #cd /opt/sigiltools/python/usr
-  #zip -r "../sigilpython${PYTHON_VER}.zip" . -x "**/__pycache__/*"
-  #cp -fv "../sigilpython${PYTHON_VER}.zip" "${SELF_DIR}/"
   cd /opt/sigiltools
   tar -cvJf sigilpython${PYTHON_VER}.tar.xz --exclude='**/__pycache__/*' python
-  cp -fv sigilpython${PYTHON_VER}.tar.xz "${SELF_DIR}/"
+  cp -fv sigilpython${PYTHON_VER}.tar.xz /build/
   ldconfig
 }
 
 time {
   prepare_baseenv
-  prepare_ssl
+  #prepare_ssl
   prepare_python
 }

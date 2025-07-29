@@ -25,7 +25,7 @@ jobs:
     - name: Build Python
       run: |
         chmod +x $GITHUB_WORKSPACE/build_sigilpython.sh
-        $GITHUB_WORKSPACE/build_sigilpython.sh
+        $GITHUB_WORKSPACE/.github/workflows/build_sigilpython.sh
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4

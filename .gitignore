@@ -40,3 +40,7 @@ target/
 
 # compiled translations files
 *.qm
+
+#AppImage builds
+*.AppImage
+*.zsync

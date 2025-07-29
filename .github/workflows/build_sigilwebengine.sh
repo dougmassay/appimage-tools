@@ -2,10 +2,10 @@
 
 # This script is for building qtwebengine for sigil appimage
 # Please run this script in docker image: ubuntu:22.04
-# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/build_sigilwebengine.sh
+# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/.github/workflows/build_sigilwebengine.sh
 # If you need keep store build cache in docker volume, just like:
 #   $ docker volume create appimage-tools
-#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/build_sigilwebengine.sh
+#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/.github/workflows/build_sigilwebengine.sh
 # Artifacts will copy to the same directory.
 
 set -o pipefail
@@ -128,9 +128,9 @@ prepare_buildenv() {
 setup_python() {
   mkdir -p /opt/sigiltools
   python_url="https://github.com/dougmassay/win-qtwebkit-5.212/releases/download/v5.212-1/sigilpython${PYTHON_VER}.tar.xz"
-  if [ -f "${SELF_DIR}/sigilpython${PYTHON_VER}.tar.xz" ]; then
+  if [ -f "/build/sigilpython${PYTHON_VER}.tar.xz" ]; then
     echo "Using local Python archive"
-    tar -xJf "${SELF_DIR}/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools
+    tar -xJf "/build/sigilpython${PYTHON_VER}.tar.xz" -C /opt/sigiltools
   else
     if [ ! -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz.download_ok" ]; then
       rm -f "/usr/src/sigilpython${PYTHON_VER}.tar.xz"
@@ -189,7 +189,7 @@ setup_webengine_src() {
   cd /opt
   #XZ_OPT='-9' tar -cJf AppImageWebEngine${QT6_FN}.tar.xz --exclude='*.debug' Qt
   tar -cJf AppImageWebEngine${QT6_FN}.tar.xz --exclude='*.debug' Qt
-  cp -fv AppImageWebEngine${QT6_FN}.tar.xz "${SELF_DIR}/"
+  cp -fv AppImageWebEngine${QT6_FN}.tar.xz /build/
 }
 
 prepare_baseenv

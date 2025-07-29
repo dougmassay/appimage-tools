@@ -20,6 +20,6 @@ jobs:
 
     - name: Prepare WebEngine Build Env
       run: |
-        chmod +x $GITHUB_WORKSPACE/build_sigilwebengine.sh
+        chmod +x $GITHUB_WORKSPACE/.github/workflows/build_sigilwebengine.sh
         $GITHUB_WORKSPACE/build_sigilwebengine.sh
 
