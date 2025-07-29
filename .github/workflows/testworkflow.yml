@@ -59,7 +59,6 @@ jobs:
     steps:
       - run: |
           apt-get update
-          apt-get install python-software-properties
           apt-get install software-properties-common
           apt-add-repository -y ppa:git-core/ppa
           apt-get update
