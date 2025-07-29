@@ -2,10 +2,10 @@
 
 # This script is for building qtwebengine for sigil appimage
 # Please run this script in docker image: ubuntu:22.04
-# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/build ubuntu:22.04 /build/.github/workflows/build_sigil_appimage.sh <short_sha or tag>
+# E.g: docker run --rm -v `git rev-parse --show-toplevel`:/reporoot ubuntu:22.04 /reporoot/.github/workflows/build_sigil_appimage.sh <short_sha or tag>
 # If you need keep store build cache in docker volume, just like:
 #   $ docker volume create appimage-tools
-#   $ docker run --rm -v `git rev-parse --show-toplevel`:/build -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /build/.github/workflows/build_sigil_appimage.sh <short_sha or tag>
+#   $ docker run --rm -v `git rev-parse --show-toplevel`:/reporoot -v appimage-tools:/var/cache/apt -v appimage-tools:/usr/src ubuntu:22.04 /reporoot/.github/workflows/build_sigil_appimage.sh <short_sha or tag>
 # Artifacts will copy to the same directory.
 
 set -o pipefail
@@ -19,7 +19,7 @@ export LC_ALL="C.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
 SELF_DIR="$(dirname "$(readlink -f "${0}")")"
-COMMITISH="${1}"
+#COMMITISH="${1}"
 
 retry() {
   # max retry 5 times
@@ -59,7 +59,6 @@ prepare_baseenv() {
     make \
     build-essential \
     curl \
-    git \
     wget \
     file \
     liblzma-dev \
@@ -203,31 +202,31 @@ clone_sigil_src() {
 }
 
 pkg_python() {
-  mkdir -p /Sigil/build
+  mkdir -p /build
   python3 -m pip install --root-user-action ignore patchelf
   python3 -m pip install --root-user-action ignore -r "${SELF_DIR}/requirements.txt"
-  python3 "${SELF_DIR}/appimg_python3_gather.py" /Sigil/build/sigil.AppDir "${PY_SHORT_VER}"
+  python3 "${SELF_DIR}/appimg_python3_gather.py" /build/sigil.AppDir "${PY_SHORT_VER}"
 }
 
 get_appimage_tools() {
-  cd /Sigil/build
+  cd /build
   wget -nv https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
   chmod +x linuxdeploy-x86_64.AppImage
   wget -nv https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
   chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
   wget -nv https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
   chmod +x linuxdeploy-plugin-appimage-x86_64.AppImage
-  cp /lib/x86_64-linux-gnu/libtiff.so.5 /Sigil/build/sigil.AppDir/usr/lib/
-  cp /lib/x86_64-linux-gnu/libwebp.so.7 /Sigil/build/sigil.AppDir/usr/lib/
+  cp /lib/x86_64-linux-gnu/libtiff.so.5 /build/sigil.AppDir/usr/lib/
+  cp /lib/x86_64-linux-gnu/libwebp.so.7 /build/sigil.AppDir/usr/lib/
 }
 
 build_sigil() {
-  cd /Sigil
-  git checkout "${COMMITISH}"
+  #cd /Sigil
+  #git checkout "${COMMITISH}"
   #mkdir build
-  cd /Sigil/build
+  cd /build
   #mkdir sigil.AppDir
-  cmake .. \
+  cmake /reporoot \
     -G "Ninja" \
     -DCMAKE_PREFIX_PATH="/opt/sigiltools/Qt/${QT6_VER_FULL}/gcc_64/lib/cmake" \
     -DPKG_SYSTEM_PYTHON=1 \
@@ -244,19 +243,19 @@ build_sigil() {
 build_appimage() {
   export LINUXDEPLOY_OUTPUT_APP_NAME="Sigil-${COMMITISH}"
   export APPIMAGE_EXTRACT_AND_RUN=1
-  cd /Sigil/build
+  cd /build
   DEPLOY_PLATFORM_THEMES=1 \
   DISABLE_COPYRIGHT_FILES_DEPLOYMENT=1 \
   LD_LIBRARY_PATH=lib:sigil.AppDir/usr/lib/python$PY_SHORT_VER/site-packages/pillow.libs:$LD_LIBRARY_PATH \
   EXTRA_PLATFORM_PLUGINS=libqwayland-generic.so \
   EXTRA_QT_MODULES="waylandcompositor" \
   ./linuxdeploy-x86_64.AppImage --appdir sigil.AppDir --plugin qt
-  python3 "${SELF_DIR}/appimg_cleanup.py" /Sigil/build/sigil.AppDir/usr/lib $PY_SHORT_VER
-  cp -fv "${SELF_DIR}/AppRun" /Sigil/build/sigil.AppDir/
+  python3 "${SELF_DIR}/appimg_cleanup.py" /build/sigil.AppDir/usr/lib $PY_SHORT_VER
+  cp -fv "${SELF_DIR}/AppRun" /build/sigil.AppDir/
   LDAI_UPDATE_INFORMATION="gh-releases-zsync|Sigil-Ebook|Sigil|latest|Sigil-*x86_64.AppImage.zsync" \
   LDAI_VERBOSE=1 \
   ./linuxdeploy-plugin-appimage-x86_64.AppImage --appdir=sigil.AppDir
-  cp -fv Sigil-*-x86_64.AppImage* /build/
+  cp -fv Sigil-*-x86_64.AppImage* /reporoot/
 }
 
 time {
@@ -265,9 +264,9 @@ time {
   setup_python
   setup_qt6
   setup_webengine
-  clone_sigil_src
+  #clone_sigil_src
   pkg_python
   get_appimage_tools
-  build_sigil
-  build_appimage
+  #build_sigil
+  #build_appimage
 }
