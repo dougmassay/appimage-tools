@@ -60,6 +60,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: echo "Commitish is $COMMITISH"
       - run: |
-          chmod +x /reporoot/.github/workflows/build_sigilpython.sh
-          /reporoot/.github/workflows/build_sigilpython.sh
+          chmod +x /reporoot/.github/workflows/build_sigil_appimage.sh
+          /reporoot/.github/workflows/build_sigil_appimage.sh
           
